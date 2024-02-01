@@ -13,6 +13,7 @@ import Navbar from './Components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UserDashboard from './pages/Dashboard';
+import { AuthProvider } from './Context/AuthContext';
 
 function App() {
   const router = createBrowserRouter([
@@ -25,7 +26,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
-            <Route path="dashboard" element={<UserDashboard/>}/>
+            <Route path="dashboard" element={<UserDashboard />} />
           </Routes>
         </>
       ),
@@ -34,7 +35,9 @@ function App() {
 
   return (
     <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ChakraProvider>
   );
 }
