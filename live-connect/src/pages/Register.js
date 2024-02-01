@@ -1,81 +1,120 @@
 // components/Register.js
 
 import React, { useState } from 'react';
-import { Box, Heading, Input, Button, VStack, FormControl, FormLabel, FormHelperText, InputGroup, InputRightElement } from '@chakra-ui/react';
+import axios from 'axios'
+import {
+  Box,
+  Heading,
+  Input,
+  Button,
+  VStack,
+  FormControl,
+  FormLabel,
+  Select,
+} from '@chakra-ui/react';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [dob, setDOB] = useState('');
+  const [gender, setGender] = useState('');
 
-  const handleRegister = () => {
-    // Implement your registration logic here
-    console.log('Register clicked');
+  const handleRegister = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/users/signup',
+        {
+          name,
+          email,
+          password,
+          confirmPassword,
+          gender,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      console.log('Registration successful:', response.data);
+    } catch (error) {
+      console.error(
+        'Registration failed:',
+        error.response ? error.response.data : error.message
+      );
+    }
   };
+  
 
   return (
     <Box p={8} color="black">
-      <VStack spacing={4} align="center">
+      <VStack spacing={4} align="center" width="100%">
         <Heading as="h1" size="xl" mb={4}>
           Register for LiveConnect
         </Heading>
-        <FormControl>
-          <FormLabel>Name</FormLabel>
-          <Input
-            type="text"
-            placeholder="Your Name"
-            size="lg"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Email</FormLabel>
-          <Input
-            type="email"
-            placeholder="Your Email"
-            size="lg"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Password</FormLabel>
-          <InputGroup size="lg">
+        <form onSubmit={handleRegister} style={{ width: '100%' }}>
+          <FormControl isRequired width="100%">
+            <FormLabel>Name</FormLabel>
+            <Input
+              type="text"
+              placeholder="Your Name"
+              size="lg"
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </FormControl>
+          <FormControl isRequired width="100%">
+            <FormLabel>Email</FormLabel>
+            <Input
+              type="email"
+              placeholder="Your Email"
+              size="lg"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </FormControl>
+          <FormControl isRequired width="100%">
+            <FormLabel>Password</FormLabel>
             <Input
               type="password"
               placeholder="Your Password"
+              size="lg"
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
-            <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={() => console.log('Toggle password')}>
-                Show
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-        </FormControl>
-        <FormControl>
-          <FormLabel>Confirm Password</FormLabel>
-          <Input
-            type="password"
-            placeholder="Confirm Password"
-            size="lg"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Date of Birth</FormLabel>
-          <Input
-            type="date"
-            placeholder="Your Date of Birth"
-            size="lg"
-            onChange={(e) => setDOB(e.target.value)}
-          />
-          <FormHelperText>Format: YYYY-MM-DD</FormHelperText>
-        </FormControl>
-        <Button colorScheme="teal" size="lg" onClick={handleRegister}>
-          Register
-        </Button>
+          </FormControl>
+          <FormControl isRequired width="100%">
+            <FormLabel>Confirm Password</FormLabel>
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              size="lg"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </FormControl>
+          <FormControl isRequired width="100%">
+            <FormLabel>Gender</FormLabel>
+            <Select
+              placeholder="Select Gender"
+              size="lg"
+              onChange={(e) => setGender(e.target.value)}
+              required
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">Non-binary</option>
+            </Select>
+          </FormControl>
+          <Button type="submit" colorScheme="teal" size="lg" width="100%">
+            Register
+          </Button>
+        </form>
       </VStack>
     </Box>
   );
