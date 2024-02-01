@@ -1,19 +1,29 @@
-// components/Login.js
-
 import React, { useState } from 'react';
 import { Box, Heading, Input, Button, VStack } from '@chakra-ui/react';
+import axios from 'axios'; // Import axios library
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Implement your login logic here
-    console.log('Login clicked');
+  const handleLogin = async () => {
+    try {
+      // Make API request to login endpoint
+      const response = await axios.post('http://localhost:8000/api/users/signin', {
+        email,
+        password,
+      });
+
+      // Handle the response, you might want to redirect the user or perform other actions
+      console.log('Login successful:', response.data);
+    } catch (error) {
+      // Handle errors, you might want to show an error message to the user
+      console.error('Login failed:', error.response ? error.response.data : error.message);
+    }
   };
 
   return (
-    <Box p={8} color="black"> {/* Set text color to black */}
+    <Box p={8} color="black">
       <VStack spacing={4} align="center">
         <Heading as="h1" size="xl" mb={4}>
           Login to LiveConnect
