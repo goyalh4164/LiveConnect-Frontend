@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Box, Flex, Heading, Spacer, Link as ChakraLink, Button } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const Navbar = () => {
   return (
@@ -13,17 +13,14 @@ export const Navbar = () => {
         </Heading>
         <Spacer />
         <Flex>
-          <ChakraLink as={Link} to="/" mr={4}>
-            Home
+          <ChakraLink as={RouterLink} to="/login" mr={4}>
+            Login
           </ChakraLink>
-          <ChakraLink as={Link} to="/chat">
-            Chat
+          <ChakraLink as={RouterLink} to="/register">
+            Register
           </ChakraLink>
         </Flex>
         <Spacer />
-        <Button colorScheme="white" variant="outline">
-          Sign In
-        </Button>
       </Flex>
     </Box>
   );
