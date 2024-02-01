@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import Navbar from './Components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import UserDashboard from './pages/Dashboard';
 
 function App() {
   const router = createBrowserRouter([
@@ -24,6 +25,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="dashboard" element={<UserDashboard/>}/>
           </Routes>
         </>
       ),
