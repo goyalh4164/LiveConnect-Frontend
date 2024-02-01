@@ -15,6 +15,7 @@ import Register from './pages/Register';
 import UserDashboard from './pages/Dashboard';
 import { AuthProvider } from './Context/AuthContext';
 import ProtectedRoute from './ProtectedRoute/ProtectedRoute';
+import Profile from './pages/Profile';
 
 function App() {
   const router = createBrowserRouter([
@@ -33,6 +34,16 @@ function App() {
                 <>
                   <ProtectedRoute>
                     <UserDashboard />
+                  </ProtectedRoute>
+                </>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <>
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 </>
               }

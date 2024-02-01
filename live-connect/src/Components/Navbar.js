@@ -10,8 +10,11 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../Context/AuthContext';
 
-export const Navbar = () => {
+const Navbar = () => {
+  const { isAuthenticated, logout } = useAuth();
+
   return (
     <Box bg="teal.500" p={4} color="white">
       <Flex align="center">
@@ -23,12 +26,25 @@ export const Navbar = () => {
 
         <Spacer />
         <Flex>
-          <ChakraLink as={RouterLink} to="/login" mr={4}>
-            Login
-          </ChakraLink>
-          <ChakraLink as={RouterLink} to="/register">
-            Register
-          </ChakraLink>
+          {isAuthenticated() ? (
+            <>
+              {/* Render "Profile" button if the user is authenticated */}
+              <ChakraLink as={RouterLink} to="/profile" mr={4}>
+                Profile
+              </ChakraLink>
+              <Button onClick={logout}>Logout</Button>
+            </>
+          ) : (
+            <>
+              {/* Render "Login" and "Register" buttons if the user is not authenticated */}
+              <ChakraLink as={RouterLink} to="/login" mr={4}>
+                Login
+              </ChakraLink>
+              <ChakraLink as={RouterLink} to="/register">
+                Register
+              </ChakraLink>
+            </>
+          )}
         </Flex>
         <Spacer />
       </Flex>

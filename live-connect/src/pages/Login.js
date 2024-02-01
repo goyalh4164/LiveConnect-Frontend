@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Box, Heading, Input, Button, VStack } from '@chakra-ui/react';
 import axios from 'axios'; // Import axios library
 import { useAuth } from '../Context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { login } = useAuth();
+  const navigate =useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setLoggingIn] = useState(false);
@@ -19,7 +21,7 @@ const Login = () => {
         password,
       });
       login(response.data.token);
-
+      navigate('/dashboard')
       // Handle the response, you might want to redirect the user or perform other actions
       console.log('Login successful:', response.data);
     } catch (error) {
