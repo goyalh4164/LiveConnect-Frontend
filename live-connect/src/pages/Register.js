@@ -1,7 +1,5 @@
-// components/Register.js
-
 import React, { useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 import {
   Box,
   Heading,
@@ -19,11 +17,14 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [gender, setGender] = useState('');
+  const [isRegistering, setRegistering] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-  
+
     try {
+      setRegistering(true);
+
       const response = await axios.post(
         'http://localhost:8000/api/users/signup',
         {
@@ -40,16 +41,17 @@ const Register = () => {
           },
         }
       );
-  
+
       console.log('Registration successful:', response.data);
     } catch (error) {
       console.error(
         'Registration failed:',
         error.response ? error.response.data : error.message
       );
+    } finally {
+      setRegistering(false);
     }
   };
-  
 
   return (
     <Box p={8} color="black">
@@ -111,8 +113,15 @@ const Register = () => {
               <option value="non-binary">Non-binary</option>
             </Select>
           </FormControl>
-          <Button type="submit" colorScheme="teal" size="lg" width="100%">
-            Register
+          {/* Register button with loading state */}
+          <Button
+            type="submit"
+            colorScheme="teal"
+            size="lg"
+            width="100%"
+            disabled={isRegistering}
+          >
+            {isRegistering ? 'Registering...' : 'Register'}
           </Button>
         </form>
       </VStack>

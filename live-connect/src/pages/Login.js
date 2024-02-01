@@ -4,12 +4,15 @@ import axios from 'axios'; // Import axios library
 import { useAuth } from '../Context/AuthContext';
 
 const Login = () => {
-  const { login} = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoggingIn, setLoggingIn] = useState(false);
 
   const handleLogin = async () => {
     try {
+      setLoggingIn(true);
+
       // Make API request to login endpoint
       const response = await axios.post('http://localhost:8000/api/users/signin', {
         email,
@@ -22,6 +25,8 @@ const Login = () => {
     } catch (error) {
       // Handle errors, you might want to show an error message to the user
       console.error('Login failed:', error.response ? error.response.data : error.message);
+    } finally {
+      setLoggingIn(false);
     }
   };
 
@@ -43,8 +48,14 @@ const Login = () => {
           size="lg"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button colorScheme="teal" size="lg" onClick={handleLogin}>
-          Login
+        {/* Login button with loading state */}
+        <Button
+          colorScheme="teal"
+          size="lg"
+          onClick={handleLogin}
+          disabled={isLoggingIn}
+        >
+          {isLoggingIn ? 'Logging In...' : 'Login'}
         </Button>
       </VStack>
     </Box>
