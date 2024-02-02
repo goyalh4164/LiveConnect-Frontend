@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useAuth } from '../Context/AuthContext';
 
 const SearchResults = ({ results }) => {
-  const { authToken } = useAuth();
+  const { authToken ,fetchFriends} = useAuth();
   
   const handleAddFriend = async (userId) => {
     console.log(authToken);
@@ -23,7 +23,7 @@ const SearchResults = ({ results }) => {
           },
         }
       );
-
+      await fetchFriends();
       // Optionally, you can update the UI or show a notification upon successful friend addition
       console.log(`User with ID ${userId} added as a friend`);
     } catch (error) {

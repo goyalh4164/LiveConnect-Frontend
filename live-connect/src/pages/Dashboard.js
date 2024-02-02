@@ -3,31 +3,31 @@ import { Box, Heading, Input, VStack, HStack, Text, Divider, Textarea, Button } 
 import axios from 'axios';
 import { useAuth } from '../Context/AuthContext';
 const UserDashboard = () => {
-  const { authToken } = useAuth();
+  const { fetchFriends,userFriends } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [userList, setUserList] = useState([]);
+  // const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     // Fetch user's friends from the API
-    const fetchFriends = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/api/users/user-friends', {
-          withCredentials: true,
-          headers: {
-            Authorization: `${authToken}`, // Include the Authorization header
-          },
-        });
+    // const fetchFriends = async () => {
+    //   try {
+    //     const response = await axios.get('http://localhost:8000/api/users/user-friends', {
+    //       withCredentials: true,
+    //       headers: {
+    //         Authorization: `${authToken}`, // Include the Authorization header
+    //       },
+    //     });
 
-        if (response.data.success) {
-          setUserList(response.data.friends);
-        }
-      } catch (error) {
-        console.error('Error fetching friends:', error.response ? error.response.data : error.message);
-      }
-    };
+    //     if (response.data.success) {
+    //       setUserList(response.data.friends);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching friends:', error.response ? error.response.data : error.message);
+    //   }
+    // };
 
     fetchFriends();
   }, []); // Empty dependency array to fetch friends only once on component mount
@@ -61,7 +61,7 @@ const UserDashboard = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <VStack spacing={2} align="stretch">
-              {userList
+              {userFriends
                 .filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase()))
                 .map((user) => (
                   <Text
