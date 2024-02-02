@@ -12,8 +12,9 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useAuth } from '../Context/AuthContext';
+
 const UserDashboard = () => {
-  const {  userFriends } = useAuth();
+  const { userFriends } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
@@ -40,6 +41,9 @@ const UserDashboard = () => {
     const newSocket = io('http://localhost:8000'); // Replace with your server URL
     setSocket(newSocket);
 
+    // Emit 'join-room' event to join a private chat room
+    newSocket.emit('join-room', { roomID: user.roomID });
+
     // Set up event listeners for receiving messages
     newSocket.on('message', (data) => {
       setChatMessages((prevMessages) => [...prevMessages, data]);
@@ -47,7 +51,7 @@ const UserDashboard = () => {
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim() !== '') {
+    if (newMessage.trim() !== '' && socket) {
       // Emit a 'message' event to the server
       socket.emit('message', { sender: 'You', message: newMessage });
       setChatMessages([...chatMessages, { sender: 'You', message: newMessage }]);
@@ -73,14 +77,14 @@ const UserDashboard = () => {
             <Input
               placeholder="Search Friends"
               size="sm"
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <VStack spacing={2} align="stretch">
               {userFriends
-                .filter(user =>
+                .filter((user) =>
                   user.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
-                .map(user => (
+                .map((user) => (
                   <Text
                     key={user.id}
                     onClick={() => handleUserSelect(user)}
@@ -126,7 +130,7 @@ const UserDashboard = () => {
           placeholder="Type your message..."
           size="md"
           value={newMessage}
-          onChange={e => setNewMessage(e.target.value)}
+          onChange={(e) => setNewMessage(e.target.value)}
         />
         <Button colorScheme="teal" size="md" onClick={handleSendMessage}>
           Send
