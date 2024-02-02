@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { login } = useAuth();
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setLoggingIn] = useState(false);
@@ -16,17 +16,23 @@ const Login = () => {
       setLoggingIn(true);
 
       // Make API request to login endpoint
-      const response = await axios.post('http://localhost:8000/api/users/signin', {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        'http://localhost:8000/api/users/signin',
+        {
+          email,
+          password,
+        }
+      );
       login(response.data.token);
-      navigate('/dashboard')
+      navigate('/dashboard');
       // Handle the response, you might want to redirect the user or perform other actions
       console.log('Login successful:', response.data);
     } catch (error) {
       // Handle errors, you might want to show an error message to the user
-      console.error('Login failed:', error.response ? error.response.data : error.message);
+      console.error(
+        'Login failed:',
+        error.response ? error.response.data : error.message
+      );
     } finally {
       setLoggingIn(false);
     }
@@ -42,13 +48,13 @@ const Login = () => {
           type="email"
           placeholder="Email"
           size="lg"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
         />
         <Input
           type="password"
           placeholder="Password"
           size="lg"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
         />
         {/* Login button with loading state */}
         <Button

@@ -19,7 +19,7 @@ const Register = () => {
   const [gender, setGender] = useState('');
   const [isRegistering, setRegistering] = useState(false);
 
-  const handleRegister = async (e) => {
+  const handleRegister = async e => {
     e.preventDefault();
 
     try {
@@ -66,7 +66,7 @@ const Register = () => {
               type="text"
               placeholder="Your Name"
               size="lg"
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               required
             />
           </FormControl>
@@ -76,7 +76,7 @@ const Register = () => {
               type="email"
               placeholder="Your Email"
               size="lg"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
             />
           </FormControl>
@@ -86,7 +86,7 @@ const Register = () => {
               type="password"
               placeholder="Your Password"
               size="lg"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
             />
           </FormControl>
@@ -96,7 +96,7 @@ const Register = () => {
               type="password"
               placeholder="Confirm Password"
               size="lg"
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={e => setConfirmPassword(e.target.value)}
               required
             />
           </FormControl>
@@ -105,7 +105,7 @@ const Register = () => {
             <Select
               placeholder="Select Gender"
               size="lg"
-              onChange={(e) => setGender(e.target.value)}
+              onChange={e => setGender(e.target.value)}
               required
             >
               <option value="male">Male</option>

@@ -1,14 +1,12 @@
-// components/SearchResults.js
-
 import React from 'react';
 import { Box, Text, Button, HStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { useAuth } from '../Context/AuthContext';
 
 const SearchResults = ({ results }) => {
-  const { authToken ,fetchFriends} = useAuth();
-  
-  const handleAddFriend = async (userId) => {
+  const { authToken, fetchFriends } = useAuth();
+
+  const handleAddFriend = async userId => {
     console.log(authToken);
     console.log(userId);
 
@@ -27,12 +25,24 @@ const SearchResults = ({ results }) => {
       // Optionally, you can update the UI or show a notification upon successful friend addition
       console.log(`User with ID ${userId} added as a friend`);
     } catch (error) {
-      console.error('Error adding friend:', error.response ? error.response.data : error.message);
+      console.error(
+        'Error adding friend:',
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
   return (
-    <Box mt={4} ml={4} p={2} bg="white" borderRadius="md" boxShadow="md" maxH="200px" overflowY="auto">
+    <Box
+      mt={4}
+      ml={4}
+      p={2}
+      bg="white"
+      borderRadius="md"
+      boxShadow="md"
+      maxH="200px"
+      overflowY="auto"
+    >
       <Text fontWeight="bold" mb={2}>
         Search Results:
       </Text>
@@ -42,7 +52,11 @@ const SearchResults = ({ results }) => {
             {user.name}
           </Text>
           <HStack>
-            <Button colorScheme="teal" size="sm" onClick={() => handleAddFriend(user._id)}>
+            <Button
+              colorScheme="teal"
+              size="sm"
+              onClick={() => handleAddFriend(user._id)}
+            >
               Chat
             </Button>
           </HStack>

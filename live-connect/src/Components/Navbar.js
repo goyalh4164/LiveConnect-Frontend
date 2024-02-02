@@ -1,5 +1,3 @@
-// components/Navbar.js
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -24,16 +22,22 @@ const Navbar = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/users/get-all-users/${searchQuery}`, {
-        withCredentials: true,
-        headers: {
-          Authorization: `${authToken}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8000/api/users/get-all-users/${searchQuery}`,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `${authToken}`,
+          },
+        }
+      );
 
       setSearchResults(response.data.users);
     } catch (error) {
-      console.error('Error searching users:', error.response ? error.response.data : error.message);
+      console.error(
+        'Error searching users:',
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -55,7 +59,7 @@ const Navbar = () => {
               type="text"
               placeholder="Search users"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
             <InputRightElement width="4.5rem">
               <Button h="1.75rem" size="sm" onClick={handleSearch}>

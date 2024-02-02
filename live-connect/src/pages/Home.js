@@ -1,5 +1,3 @@
-// components/Home.js
-
 import React from 'react';
 import { Box, Heading, Text, VStack, Button } from '@chakra-ui/react';
 import { TestimonialItem } from '../Components/TestimonialItem';
