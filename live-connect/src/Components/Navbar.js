@@ -14,10 +14,31 @@ import {
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import axios from 'axios';
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout,authToken } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
+  // Function to handle the Enter key press
+  const handleSearch = async () => {
+    try {
+      // Make an API request to the search endpoint with the searchQuery
+      const response = await axios.get(`http://localhost:8000/api/users/get-all-users/${searchQuery}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `${authToken}`, // Include the Authorization header
+        },
+      });
+      
+      // Update the searchResults state with the response data
+      console.log(response.data.users)
+      setSearchResults(response.data.users);
+    } catch (error) {
+      console.error('Error searching users:', error.response ? error.response.data : error.message);
+    }
+  };
 
   return (
     <Box bg="teal.500" p={4} color="white">
@@ -31,18 +52,16 @@ const Navbar = () => {
         <Spacer />
 
         {isAuthenticated() && (
-          // Display the search bar only when the user is logged in
           <InputGroup size="md" mr={4}>
             <Input
               pr="4.5rem"
               type="text"
               placeholder="Search users"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
             <InputRightElement width="4.5rem">
-              {/* Add functionality for search button */}
-              <Button h="1.75rem" size="sm">
+              <Button h="1.75rem" size="sm" onClick={handleSearch}>
                 Search
               </Button>
             </InputRightElement>
@@ -52,7 +71,6 @@ const Navbar = () => {
         <Flex>
           {isAuthenticated() ? (
             <>
-              {/* Render "Profile" button if the user is authenticated */}
               <ChakraLink as={RouterLink} to="/profile" mr={4}>
                 Profile
               </ChakraLink>
@@ -60,7 +78,6 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              {/* Render "Login" and "Register" buttons if the user is not authenticated */}
               <ChakraLink as={RouterLink} to="/login" mr={4}>
                 Login
               </ChakraLink>
