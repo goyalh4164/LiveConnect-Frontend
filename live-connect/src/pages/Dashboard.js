@@ -12,15 +12,12 @@ import {
 } from '@chakra-ui/react';
 import { useAuth } from '../Context/AuthContext';
 const UserDashboard = () => {
-  const { fetchFriends, userFriends } = useAuth();
+  const {  userFriends } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  useEffect(() => {
-    fetchFriends();
-  });
 
   const handleUserSelect = user => {
     setSelectedUser(user);

@@ -1,6 +1,6 @@
 // AuthContext.js
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -34,9 +34,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    if (authToken) {
+      fetchFriends();
+    }
+  }, [authToken]);
+
   const login = token => {
     setAuthToken(token);
-    fetchFriends(); // Trigger fetchFriends on login
+    // fetchFriends(); // Trigger fetchFriends on login
   };
 
   const logout = () => {
