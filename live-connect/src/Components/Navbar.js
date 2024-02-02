@@ -15,25 +15,22 @@ import {
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
+import SearchResults from './SearchResults';
 
 const Navbar = () => {
-  const { isAuthenticated, logout,authToken } = useAuth();
+  const { isAuthenticated, logout, authToken } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
-  // Function to handle the Enter key press
   const handleSearch = async () => {
     try {
-      // Make an API request to the search endpoint with the searchQuery
       const response = await axios.get(`http://localhost:8000/api/users/get-all-users/${searchQuery}`, {
         withCredentials: true,
         headers: {
-          Authorization: `${authToken}`, // Include the Authorization header
+          Authorization: `${authToken}`,
         },
       });
-      
-      // Update the searchResults state with the response data
-      console.log(response.data.users)
+
       setSearchResults(response.data.users);
     } catch (error) {
       console.error('Error searching users:', error.response ? error.response.data : error.message);
@@ -58,7 +55,7 @@ const Navbar = () => {
               type="text"
               placeholder="Search users"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <InputRightElement width="4.5rem">
               <Button h="1.75rem" size="sm" onClick={handleSearch}>
@@ -89,6 +86,11 @@ const Navbar = () => {
         </Flex>
         <Spacer />
       </Flex>
+
+      {/* Display SearchResults component */}
+      {searchQuery && isAuthenticated() && searchResults.length > 0 && (
+        <SearchResults results={searchResults} />
+      )}
     </Box>
   );
 };
