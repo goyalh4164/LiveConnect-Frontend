@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(null);
   const [userFriends, setUserFriends] = useState([]);
   const [userName, setUserName] = useState(null);
+  const [userID, setUserID] = useState(null);
 
   const fetchFriends = async () => {
     if (authToken) {
@@ -41,16 +42,18 @@ export const AuthProvider = ({ children }) => {
     }
   }, [authToken]);
 
-  const login = (token, name) => {
+  const login = (token, name, userID) => {
     setAuthToken(token);
     setUserName(name);
-    // console.log(token, name);
+    setUserID(userID);
+    console.log(token, name, userID);
     // fetchFriends(); // Trigger fetchFriends on login
   };
 
   const logout = () => {
     setAuthToken(null);
     setUserName(null);
+    setUserID(null);
     setUserFriends([]); // Clear userFriends on logout
   };
 
@@ -68,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         fetchFriends,
         userName,
+        userID,
       }}
     >
       {children}

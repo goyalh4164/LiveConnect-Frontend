@@ -23,8 +23,8 @@ const Login = () => {
           password,
         }
       );
-      const { token, name } = response.data;
-      login(token, name);
+      const { token, name ,id } = response.data;
+      login(token, name,id);
       navigate('/dashboard');
       // Handle the response, you might want to redirect the user or perform other actions
       // console.log('Login successful:', response.data);

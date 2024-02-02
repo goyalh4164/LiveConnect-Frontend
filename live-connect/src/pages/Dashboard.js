@@ -14,12 +14,13 @@ import {
 import { useAuth } from '../Context/AuthContext';
 
 const UserDashboard = () => {
-  const { userFriends,userName } = useAuth();
+  const { userFriends,userName,userID } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
+  
 
   useEffect(() => {
     // Clean up the socket connection when the component unmounts
@@ -32,7 +33,7 @@ const UserDashboard = () => {
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
-
+    setChatMessages([]);
     // Establish a Socket.IO connection when a user is selected
     if (socket) {
       socket.disconnect();
@@ -54,7 +55,7 @@ const UserDashboard = () => {
   const handleSendMessage = () => {
     if (newMessage.trim() !== '' && socket) {
       // Emit a 'message' event to the server
-      socket.emit('message', { sender: userName, message: newMessage });
+      socket.emit('message', { sender: userName, message: newMessage,senderID:userID,receiverID:selectedUser.id });
       setChatMessages([...chatMessages, { sender: 'You', message: newMessage }]);
       setNewMessage('');
     }
