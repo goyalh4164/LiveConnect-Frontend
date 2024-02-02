@@ -14,7 +14,7 @@ import {
 import { useAuth } from '../Context/AuthContext';
 
 const UserDashboard = () => {
-  const { userFriends } = useAuth();
+  const { userFriends,userName } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
@@ -46,6 +46,7 @@ const UserDashboard = () => {
 
     // Set up event listeners for receiving messages
     newSocket.on('message', (data) => {
+      console.log(data)
       setChatMessages((prevMessages) => [...prevMessages, data]);
     });
   };
@@ -53,7 +54,7 @@ const UserDashboard = () => {
   const handleSendMessage = () => {
     if (newMessage.trim() !== '' && socket) {
       // Emit a 'message' event to the server
-      socket.emit('message', { sender: 'You', message: newMessage });
+      socket.emit('message', { sender: userName, message: newMessage });
       setChatMessages([...chatMessages, { sender: 'You', message: newMessage }]);
       setNewMessage('');
     }

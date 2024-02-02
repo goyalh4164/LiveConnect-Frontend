@@ -27,7 +27,7 @@ const Login = () => {
       login(token, name);
       navigate('/dashboard');
       // Handle the response, you might want to redirect the user or perform other actions
-      console.log('Login successful:', response.data);
+      // console.log('Login successful:', response.data);
     } catch (error) {
       // Handle errors, you might want to show an error message to the user
       console.error(

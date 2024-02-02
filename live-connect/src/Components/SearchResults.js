@@ -7,8 +7,8 @@ const SearchResults = ({ results }) => {
   const { authToken, fetchFriends } = useAuth();
 
   const handleAddFriend = async userId => {
-    console.log(authToken);
-    console.log(userId);
+    // console.log(authToken);
+    // console.log(userId);
 
     try {
       // Make an API request to add the user as a friend

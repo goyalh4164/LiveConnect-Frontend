@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   const login = (token, name) => {
     setAuthToken(token);
     setUserName(name);
-    console.log(token, name);
+    // console.log(token, name);
     // fetchFriends(); // Trigger fetchFriends on login
   };
 
