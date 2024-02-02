@@ -1,6 +1,6 @@
 // components/Navbar.js
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Flex,
@@ -8,12 +8,16 @@ import {
   Spacer,
   Link as ChakraLink,
   Button,
+  Input,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <Box bg="teal.500" p={4} color="white">
@@ -25,6 +29,26 @@ const Navbar = () => {
         </ChakraLink>
 
         <Spacer />
+
+        {isAuthenticated() && (
+          // Display the search bar only when the user is logged in
+          <InputGroup size="md" mr={4}>
+            <Input
+              pr="4.5rem"
+              type="text"
+              placeholder="Search users"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <InputRightElement width="4.5rem">
+              {/* Add functionality for search button */}
+              <Button h="1.75rem" size="sm">
+                Search
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        )}
+
         <Flex>
           {isAuthenticated() ? (
             <>
