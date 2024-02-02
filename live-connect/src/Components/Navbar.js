@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -10,7 +10,7 @@ import {
   InputGroup,
   InputRightElement,
 } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
 import SearchResults from './SearchResults';
@@ -19,6 +19,12 @@ const Navbar = () => {
   const { isAuthenticated, logout, authToken } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const location = useLocation(); // React Router hook to get the current location
+
+  useEffect(() => {
+    // Reset search results when the location changes
+    setSearchResults([]);
+  }, [location]);
 
   const handleSearch = async () => {
     try {
@@ -59,7 +65,7 @@ const Navbar = () => {
               type="text"
               placeholder="Search users"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <InputRightElement width="4.5rem">
               <Button h="1.75rem" size="sm" onClick={handleSearch}>
@@ -72,9 +78,16 @@ const Navbar = () => {
         <Flex>
           {isAuthenticated() ? (
             <>
-              <ChakraLink as={RouterLink} to="/profile" mr={4}>
-                Profile
-              </ChakraLink>
+              {/* Conditionally render based on the current route */}
+              {location.pathname === '/profile' ? (
+                <ChakraLink as={RouterLink} to="/dashboard" mr={4}>
+                  Dashboard
+                </ChakraLink>
+              ) : (
+                <ChakraLink as={RouterLink} to="/profile" mr={4}>
+                  Profile
+                </ChakraLink>
+              )}
               <Button onClick={logout}>Logout</Button>
             </>
           ) : (
