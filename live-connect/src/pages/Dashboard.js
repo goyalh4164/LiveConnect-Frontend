@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 import {
   Box,
   Heading,
@@ -17,19 +18,39 @@ const UserDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [socket, setSocket] = useState(null);
 
+  useEffect(() => {
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [socket]);
 
-  const handleUserSelect = user => {
+  const handleUserSelect = (user) => {
     setSelectedUser(user);
-    setChatMessages([]);
+
+    // Establish a Socket.IO connection when a user is selected
+    if (socket) {
+      socket.disconnect();
+    }
+
+    const newSocket = io('http://localhost:8000'); // Replace with your server URL
+    setSocket(newSocket);
+
+    // Set up event listeners for receiving messages
+    newSocket.on('message', (data) => {
+      setChatMessages((prevMessages) => [...prevMessages, data]);
+    });
   };
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== '') {
-      setChatMessages([
-        ...chatMessages,
-        { sender: 'You', message: newMessage },
-      ]);
+      // Emit a 'message' event to the server
+      socket.emit('message', { sender: 'You', message: newMessage });
+      setChatMessages([...chatMessages, { sender: 'You', message: newMessage }]);
       setNewMessage('');
     }
   };
