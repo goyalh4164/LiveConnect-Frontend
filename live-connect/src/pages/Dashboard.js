@@ -1,20 +1,36 @@
-// components/UserDashboard.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Heading, Input, VStack, HStack, Text, Divider, Textarea, Button } from '@chakra-ui/react';
-
+import axios from 'axios';
+import { useAuth } from '../Context/AuthContext';
 const UserDashboard = () => {
+  const { authToken } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [userList, setUserList] = useState([]);
 
-  const userList = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Doe' },
-    { id: 3, name: 'Alice' },
-    // Add more users as needed
-  ];
+  useEffect(() => {
+    // Fetch user's friends from the API
+    const fetchFriends = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/users/user-friends', {
+          withCredentials: true,
+          headers: {
+            Authorization: `${authToken}`, // Include the Authorization header
+          },
+        });
+
+        if (response.data.success) {
+          setUserList(response.data.friends);
+        }
+      } catch (error) {
+        console.error('Error fetching friends:', error.response ? error.response.data : error.message);
+      }
+    };
+
+    fetchFriends();
+  }, []); // Empty dependency array to fetch friends only once on component mount
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
