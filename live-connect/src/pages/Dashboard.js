@@ -47,15 +47,17 @@ const UserDashboard = () => {
 
     // Set up event listeners for receiving messages
     newSocket.on('message', (data) => {
-      console.log(data)
+      console.log(data);
+      // window.alert('New message received'); // Display a popup
       setChatMessages((prevMessages) => [...prevMessages, data]);
     });
+    
   };
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== '' && socket) {
       // Emit a 'message' event to the server
-      socket.emit('message', { sender: userName, message: newMessage,senderID:userID,receiverID:selectedUser.id });
+      socket.emit('message', { sender: userName, message: newMessage,senderID:userID,receiverID:selectedUser.id,roomID:selectedUser.roomID });
       setChatMessages([...chatMessages, { sender: 'You', message: newMessage }]);
       setNewMessage('');
     }
