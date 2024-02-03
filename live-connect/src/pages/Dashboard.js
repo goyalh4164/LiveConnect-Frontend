@@ -130,7 +130,7 @@ const UserDashboard = () => {
             <Heading as="h2" size="md">
               {selectedUser
                 ? `Chatting with ${selectedUser.name}`
-                : 'Select a friend to chat'}
+                : `Welcome, ${userName}!`} {/* Display the welcome message */}
             </Heading>
           </HStack>
           <Divider my={4} />
@@ -151,7 +151,7 @@ const UserDashboard = () => {
       {/* New Message Input */}
       <HStack mt={4} justify="flex-end">
         <Textarea
-          placeholder="Type your message..."
+          placeholder={`Message ${selectedUser?selectedUser.name:''}`} // Displaying the current user's name in the placeholder
           size="md"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
