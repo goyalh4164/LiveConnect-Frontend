@@ -14,51 +14,71 @@ import {
 import { useAuth } from '../Context/AuthContext';
 
 const UserDashboard = () => {
-  const { userFriends,userName,userID } = useAuth();
+  const { userFriends, userName, userID } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
-  
 
   useEffect(() => {
-    // Clean up the socket connection when the component unmounts
+    // Establish a Socket.IO connection when the component mounts
+    const newSocket = io('http://localhost:8000'); // Replace with your server URL
+    setSocket(newSocket);
+
     return () => {
-      if (socket) {
-        socket.disconnect();
+      // Clean up the socket connection when the component unmounts
+      if (newSocket) {
+        newSocket.disconnect();
       }
     };
-  }, [socket]);
+  }, []); // Run only on mount and unmount
+
+  useEffect(() => {
+    // Join rooms of all friends
+    if (socket) {
+      userFriends.forEach((friend) => {
+        socket.emit('join-room', { roomID: friend.roomID });
+      });
+    }
+
+    // Set up event listener for receiving messages
+    const handleMessage = (data) => {
+      console.log(data);
+      setChatMessages((prevMessages) => [...prevMessages, data]);
+    };
+
+    if (socket) {
+      socket.on('message', handleMessage);
+    }
+
+    return () => {
+      // Remove the event listener when the component unmounts
+      if (socket) {
+        socket.off('message', handleMessage);
+      }
+    };
+  }, [socket, userFriends]);
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
     setChatMessages([]);
-    // Establish a Socket.IO connection when a user is selected
-    if (socket) {
-      socket.disconnect();
-    }
-
-    const newSocket = io('http://localhost:8000'); // Replace with your server URL
-    setSocket(newSocket);
-
-    // Emit 'join-room' event to join a private chat room
-    newSocket.emit('join-room', { roomID: user.roomID });
-
-    // Set up event listeners for receiving messages
-    newSocket.on('message', (data) => {
-      console.log(data);
-      // window.alert('New message received'); // Display a popup
-      setChatMessages((prevMessages) => [...prevMessages, data]);
-    });
-    
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim() !== '' && socket) {
+    if (newMessage.trim() !== '' && socket && selectedUser) {
       // Emit a 'message' event to the server
-      socket.emit('message', { sender: userName, message: newMessage,senderID:userID,receiverID:selectedUser.id,roomID:selectedUser.roomID });
-      setChatMessages([...chatMessages, { sender: 'You', message: newMessage }]);
+      socket.emit('message', {
+        sender: userName,
+        message: newMessage,
+        senderID: userID,
+        receiverID: selectedUser.id,
+        roomID: selectedUser.roomID,
+      });
+      setChatMessages([
+        ...chatMessages,
+        { sender: 'You', message: newMessage },
+      ]);
       setNewMessage('');
     }
   };
