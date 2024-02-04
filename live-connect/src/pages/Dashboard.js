@@ -30,7 +30,7 @@ const UserDashboard = () => {
   useEffect(() => {
     // toast.success('Success notification!');
     // Establish a Socket.IO connection when the component mounts
-    const newSocket = io('http://localhost:8000'); // Replace with your server URL
+    const newSocket = io('https://liveconnect.onrender.com'); // Replace with your server URL
     setSocket(newSocket);
 
     return () => {
@@ -61,7 +61,7 @@ const UserDashboard = () => {
       if (selectedUser) {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/messages/get-messages/${userID}/${selectedUser.id}`
+            `https://liveconnect.onrender.com/api/messages/get-messages/${userID}/${selectedUser.id}`
           );
 
           if (response.data.success) {

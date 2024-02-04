@@ -15,7 +15,7 @@ const Profile = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:8000/api/users/get-details/',
+          'https://liveconnect.onrender.com/api/users/get-details/',
           {
             withCredentials: true,
             headers: {

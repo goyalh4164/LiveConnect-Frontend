@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     if (authToken) {
       try {
         const response = await axios.get(
-          'http://localhost:8000/api/users/user-friends',
+          'https://liveconnect.onrender.com/api/users/user-friends',
           {
             withCredentials: true,
             headers: {

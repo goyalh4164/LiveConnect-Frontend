@@ -29,7 +29,7 @@ const Navbar = () => {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/users/get-all-users/${searchQuery}`,
+        `https://liveconnect.onrender.com/api/users/get-all-users/${searchQuery}`,
         {
           withCredentials: true,
           headers: {

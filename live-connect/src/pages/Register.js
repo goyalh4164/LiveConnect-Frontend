@@ -27,7 +27,7 @@ const Register = () => {
       setRegistering(true);
 
       const response = await axios.post(
-        'http://localhost:8000/api/users/signup',
+        'https://liveconnect.onrender.com/api/users/signup',
         {
           name,
           email,

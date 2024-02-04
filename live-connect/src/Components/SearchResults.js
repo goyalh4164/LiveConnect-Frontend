@@ -13,7 +13,7 @@ const SearchResults = ({ results }) => {
     try {
       // Make an API request to add the user as a friend
       await axios.post(
-        `http://localhost:8000/api/users/add-friend/${userId}`,
+        `https://liveconnect.onrender.com/api/users/add-friend/${userId}`,
         null, // Pass null or an empty object as the second parameter if no request body is needed
         {
           headers: {
