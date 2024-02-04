@@ -15,6 +15,7 @@ import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
 import { css } from '@emotion/react';
 import { ClipLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
 
 const UserDashboard = () => {
   const { userFriends, userName, userID } = useAuth();
@@ -27,6 +28,7 @@ const UserDashboard = () => {
   const [loadingMessages, setLoadingMessages] = useState(true);
 
   useEffect(() => {
+    // toast.success('Success notification!');
     // Establish a Socket.IO connection when the component mounts
     const newSocket = io('http://localhost:8000'); // Replace with your server URL
     setSocket(newSocket);
