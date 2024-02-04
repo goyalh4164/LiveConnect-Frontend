@@ -24,6 +24,7 @@ const UserDashboard = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
+  const [loadingMessages, setLoadingMessages] = useState(true);
 
   useEffect(() => {
     // Establish a Socket.IO connection when the component mounts
@@ -44,7 +45,7 @@ const UserDashboard = () => {
   `;
 
   const formatMessages = (messages, currentUserID, selectedUser) => {
-    return messages.map(message => {
+    return messages.map((message) => {
       const isCurrentUser = message.userID === currentUserID;
       if (isCurrentUser) return `you: ${message.content}`;
       return `${selectedUser}: ${message.content}`;
@@ -54,6 +55,7 @@ const UserDashboard = () => {
   useEffect(() => {
     // Function to fetch messages
     const fetchMessages = async () => {
+      setLoadingMessages(true);
       if (selectedUser) {
         try {
           const response = await axios.get(
@@ -71,6 +73,8 @@ const UserDashboard = () => {
           }
         } catch (error) {
           console.error('Error fetching messages:', error);
+        } finally {
+          setLoadingMessages(false);
         }
       }
     };
@@ -82,7 +86,7 @@ const UserDashboard = () => {
   useEffect(() => {
     // Join rooms of all friends when socket is available
     if (socket) {
-      userFriends.forEach(friend => {
+      userFriends.forEach((friend) => {
         socket.emit('join-room', { roomID: friend.roomID });
       });
     }
@@ -90,10 +94,10 @@ const UserDashboard = () => {
 
   // Set up event listener for receiving messages
   useEffect(() => {
-    const handleMessage = data => {
+    const handleMessage = (data) => {
       if (selectedUser && data.roomID === selectedUser.roomID) {
         const formattedMessage = `${data.sender} : ${data.message}`;
-        setChatMessages(prevMessages => [...prevMessages, formattedMessage]);
+        setChatMessages((prevMessages) => [...prevMessages, formattedMessage]);
       }
     };
 
@@ -152,11 +156,11 @@ const UserDashboard = () => {
             <Input
               placeholder="Search Friends"
               size="sm"
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <VStack spacing={2} align="stretch">
               {userFriends
-                .filter(user =>
+                .filter((user) =>
                   user.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
                 .map((user, index) => (
@@ -189,10 +193,15 @@ const UserDashboard = () => {
           </HStack>
           <Divider my={4} />
 
-          {/* Display spinner while loading messages */}
           {/* Display spinner or message when loading messages */}
           {!chatMessages.length ? (
-            <Text>No Messages Yet! Start Your Conversation</Text>
+            <>
+              {loadingMessages ? (
+                <ClipLoader color="#teal" css={override} size={50} />
+              ) : (
+                <Text>No Messages Yet! Start Your Conversation</Text>
+              )}
+            </>
           ) : (
             <VStack spacing={2} align="stretch" flex="1">
               {chatMessages.map((formattedMessage, index) => (
@@ -209,7 +218,7 @@ const UserDashboard = () => {
           placeholder={`Message ${selectedUser ? selectedUser.name : ''}`}
           size="md"
           value={newMessage}
-          onChange={e => setNewMessage(e.target.value)}
+          onChange={(e) => setNewMessage(e.target.value)}
         />
         <Button colorScheme="teal" size="md" onClick={handleSendMessage}>
           Send
