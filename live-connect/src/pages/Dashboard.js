@@ -72,23 +72,20 @@ const UserDashboard = () => {
   }, [selectedUser, userID, userName]);
 
   useEffect(() => {
-    // Join rooms of all friends
+    // Join rooms of all friends when socket is available
     if (socket) {
       userFriends.forEach((friend) => {
         socket.emit('join-room', { roomID: friend.roomID });
       });
     }
+  }, [socket, userFriends]);
   
-    // Set up event listener for receiving messages
+  // Set up event listener for receiving messages
+  useEffect(() => {
     const handleMessage = (data) => {
-      console.log(data);
       if (selectedUser && data.roomID === selectedUser.roomID) {
-        const formattedMessage = `
-          ${data.sender} : 
-         ${data.message}`;
+        const formattedMessage = `${data.sender} : ${data.message}`;
         setChatMessages((prevMessages) => [...prevMessages, formattedMessage]);
-        // chatMessages.push(formattedMessage);
-        // setChatMessages(chatMessages)
       }
     };
   
@@ -97,12 +94,12 @@ const UserDashboard = () => {
     }
   
     return () => {
-      // Remove the event listener when the component unmounts
       if (socket) {
         socket.off('message', handleMessage);
       }
     };
-  }, [socket, userFriends, selectedUser]);
+  }, [socket, selectedUser]);
+  
   
 
   const handleUserSelect = user => {
