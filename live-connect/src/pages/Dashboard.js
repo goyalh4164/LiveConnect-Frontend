@@ -188,13 +188,15 @@ const UserDashboard = () => {
             <Heading as="h2" size="md">
               {selectedUser
                 ? `Chatting with ${selectedUser.name}`
-                : `Welcome, ${userName}!`}{' '}
+                : `Welcome , ${userName}`}{' '}
             </Heading>
           </HStack>
           <Divider my={4} />
 
           {/* Display spinner or message when loading messages */}
-          {!chatMessages.length ? (
+          {!selectedUser ? (
+            <Text>Start Your Chatting By Selecting Your Friend</Text>
+          ) : !chatMessages.length ? (
             <>
               {loadingMessages ? (
                 <ClipLoader color="#teal" css={override} size={50} />
