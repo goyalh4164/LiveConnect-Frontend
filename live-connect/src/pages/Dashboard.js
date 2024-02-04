@@ -101,6 +101,10 @@ const UserDashboard = () => {
         const formattedMessage = `${data.sender} : ${data.message}`;
         setChatMessages((prevMessages) => [...prevMessages, formattedMessage]);
       }
+      else{
+        // console.log(`New Message from ${data.sender}: ${data.message}`)
+        toast.success(`New Message from ${data.sender}: ${data.message}`)
+      }
     };
 
     if (socket) {

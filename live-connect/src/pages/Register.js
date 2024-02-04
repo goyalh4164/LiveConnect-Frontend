@@ -10,6 +10,7 @@ import {
   FormLabel,
   Select,
 } from '@chakra-ui/react';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -41,9 +42,12 @@ const Register = () => {
           },
         }
       );
-
+      if(response.data.success){
+        toast.success('Registration Successful!!')
+      }
       console.log('Registration successful:', response.data);
     } catch (error) {
+      toast.error('Registration Failed')
       console.error(
         'Registration failed:',
         error.response ? error.response.data : error.message
