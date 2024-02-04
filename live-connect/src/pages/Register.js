@@ -42,7 +42,7 @@ const Register = () => {
         }
       );
 
-      // console.log('Registration successful:', response.data);
+      console.log('Registration successful:', response.data);
     } catch (error) {
       console.error(
         'Registration failed:',

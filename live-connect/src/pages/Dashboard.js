@@ -13,11 +13,14 @@ import {
 } from '@chakra-ui/react';
 import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
+import { css } from '@emotion/react';
+import { ClipLoader } from 'react-spinners';
 
 const UserDashboard = () => {
   const { userFriends, userName, userID } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserIndex, setSelectedUserIndex] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState(null);
@@ -34,7 +37,12 @@ const UserDashboard = () => {
       }
     };
   }, []); // Run only on mount and unmount
-  
+
+  const override = css`
+    display: block;
+    margin: 0 auto;
+  `;
+
   const formatMessages = (messages, currentUserID, selectedUser) => {
     return messages.map(message => {
       const isCurrentUser = message.userID === currentUserID;
@@ -74,36 +82,35 @@ const UserDashboard = () => {
   useEffect(() => {
     // Join rooms of all friends when socket is available
     if (socket) {
-      userFriends.forEach((friend) => {
+      userFriends.forEach(friend => {
         socket.emit('join-room', { roomID: friend.roomID });
       });
     }
   }, [socket, userFriends]);
-  
+
   // Set up event listener for receiving messages
   useEffect(() => {
-    const handleMessage = (data) => {
+    const handleMessage = data => {
       if (selectedUser && data.roomID === selectedUser.roomID) {
         const formattedMessage = `${data.sender} : ${data.message}`;
-        setChatMessages((prevMessages) => [...prevMessages, formattedMessage]);
+        setChatMessages(prevMessages => [...prevMessages, formattedMessage]);
       }
     };
-  
+
     if (socket) {
       socket.on('message', handleMessage);
     }
-  
+
     return () => {
       if (socket) {
         socket.off('message', handleMessage);
       }
     };
   }, [socket, selectedUser]);
-  
-  
 
-  const handleUserSelect = user => {
+  const handleUserSelect = (user, index) => {
     setSelectedUser(user);
+    setSelectedUserIndex(index);
     setChatMessages([]);
   };
 
@@ -119,9 +126,7 @@ const UserDashboard = () => {
       });
 
       // Update the state with the new formatted message
-      const formattedMessage = `
-        you : 
-       ${newMessage}`;
+      const formattedMessage = `you : ${newMessage}`;
       setChatMessages([...chatMessages, formattedMessage]);
 
       // Clear the input field
@@ -154,14 +159,17 @@ const UserDashboard = () => {
                 .filter(user =>
                   user.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
-                .map(user => (
+                .map((user, index) => (
                   <Text
                     key={user.id}
-                    onClick={() => handleUserSelect(user)}
+                    onClick={() => handleUserSelect(user, index)}
                     cursor="pointer"
                     _hover={{ background: '#f2f2f2' }}
                     p={2}
                     borderRadius="md"
+                    className={
+                      selectedUserIndex === index ? 'selected-user' : ''
+                    }
                   >
                     {user.name}
                   </Text>
@@ -177,23 +185,28 @@ const UserDashboard = () => {
               {selectedUser
                 ? `Chatting with ${selectedUser.name}`
                 : `Welcome, ${userName}!`}{' '}
-              {/* Display the welcome message */}
             </Heading>
           </HStack>
           <Divider my={4} />
-          {/* Chat Messages */}
-          <VStack spacing={2} align="stretch" flex="1">
-            {chatMessages.map((formattedMessage, index) => (
-              <Text key={index}>{formattedMessage}</Text>
-            ))}
-          </VStack>
+
+          {/* Display spinner while loading messages */}
+          {/* Display spinner or message when loading messages */}
+          {!chatMessages.length ? (
+            <Text>No Messages Yet! Start Your Conversation</Text>
+          ) : (
+            <VStack spacing={2} align="stretch" flex="1">
+              {chatMessages.map((formattedMessage, index) => (
+                <Text key={index}>{formattedMessage}</Text>
+              ))}
+            </VStack>
+          )}
         </Box>
       </Box>
 
       {/* New Message Input */}
       <HStack mt={4} justify="flex-end">
         <Textarea
-          placeholder={`Message ${selectedUser ? selectedUser.name : ''}`} // Displaying the current user's name in the placeholder
+          placeholder={`Message ${selectedUser ? selectedUser.name : ''}`}
           size="md"
           value={newMessage}
           onChange={e => setNewMessage(e.target.value)}
