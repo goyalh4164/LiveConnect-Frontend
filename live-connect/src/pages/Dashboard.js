@@ -12,6 +12,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useAuth } from '../Context/AuthContext';
+import axios from 'axios';
 
 const UserDashboard = () => {
   const { userFriends, userName, userID } = useAuth();
@@ -33,6 +34,42 @@ const UserDashboard = () => {
       }
     };
   }, []); // Run only on mount and unmount
+  
+  const formatMessages = (messages, currentUserID, selectedUser) => {
+    return messages.map(message => {
+      const isCurrentUser = message.userID === currentUserID;
+      if (isCurrentUser) return `you: ${message.content}`;
+      return `${selectedUser}: ${message.content}`;
+    });
+  };
+
+  useEffect(() => {
+    // Function to fetch messages
+    const fetchMessages = async () => {
+      if (selectedUser) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/api/messages/get-messages/${userID}/${selectedUser.id}`
+          );
+
+          if (response.data.success) {
+            const formattedMessages = formatMessages(
+              response.data.messages,
+              userID,
+              selectedUser.name
+            );
+            console.log(formattedMessages);
+            setChatMessages(formattedMessages);
+          }
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+        }
+      }
+    };
+
+    // Call the fetchMessages function when selectedUser changes
+    fetchMessages();
+  }, [selectedUser, userID, userName]);
 
   useEffect(() => {
     // Join rooms of all friends
@@ -41,26 +78,34 @@ const UserDashboard = () => {
         socket.emit('join-room', { roomID: friend.roomID });
       });
     }
-
+  
     // Set up event listener for receiving messages
     const handleMessage = (data) => {
       console.log(data);
-      setChatMessages((prevMessages) => [...prevMessages, data]);
+      if (selectedUser && data.roomID === selectedUser.roomID) {
+        const formattedMessage = `
+          ${data.sender} : 
+         ${data.message}`;
+        setChatMessages((prevMessages) => [...prevMessages, formattedMessage]);
+        // chatMessages.push(formattedMessage);
+        // setChatMessages(chatMessages)
+      }
     };
-
+  
     if (socket) {
       socket.on('message', handleMessage);
     }
-
+  
     return () => {
       // Remove the event listener when the component unmounts
       if (socket) {
         socket.off('message', handleMessage);
       }
     };
-  }, [socket, userFriends]);
+  }, [socket, userFriends, selectedUser]);
+  
 
-  const handleUserSelect = (user) => {
+  const handleUserSelect = user => {
     setSelectedUser(user);
     setChatMessages([]);
   };
@@ -75,10 +120,14 @@ const UserDashboard = () => {
         receiverID: selectedUser.id,
         roomID: selectedUser.roomID,
       });
-      setChatMessages([
-        ...chatMessages,
-        { sender: 'You', message: newMessage },
-      ]);
+
+      // Update the state with the new formatted message
+      const formattedMessage = `
+        you : 
+       ${newMessage}`;
+      setChatMessages([...chatMessages, formattedMessage]);
+
+      // Clear the input field
       setNewMessage('');
     }
   };
@@ -101,14 +150,14 @@ const UserDashboard = () => {
             <Input
               placeholder="Search Friends"
               size="sm"
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
             <VStack spacing={2} align="stretch">
               {userFriends
-                .filter((user) =>
+                .filter(user =>
                   user.name.toLowerCase().includes(searchQuery.toLowerCase())
                 )
-                .map((user) => (
+                .map(user => (
                   <Text
                     key={user.id}
                     onClick={() => handleUserSelect(user)}
@@ -130,19 +179,15 @@ const UserDashboard = () => {
             <Heading as="h2" size="md">
               {selectedUser
                 ? `Chatting with ${selectedUser.name}`
-                : `Welcome, ${userName}!`} {/* Display the welcome message */}
+                : `Welcome, ${userName}!`}{' '}
+              {/* Display the welcome message */}
             </Heading>
           </HStack>
           <Divider my={4} />
           {/* Chat Messages */}
           <VStack spacing={2} align="stretch" flex="1">
-            {chatMessages.map((msg, index) => (
-              <Text
-                key={index}
-                fontWeight={msg.sender === 'You' ? 'bold' : 'normal'}
-              >
-                <strong>{msg.sender}:</strong> {msg.message}
-              </Text>
+            {chatMessages.map((formattedMessage, index) => (
+              <Text key={index}>{formattedMessage}</Text>
             ))}
           </VStack>
         </Box>
@@ -151,10 +196,10 @@ const UserDashboard = () => {
       {/* New Message Input */}
       <HStack mt={4} justify="flex-end">
         <Textarea
-          placeholder={`Message ${selectedUser?selectedUser.name:''}`} // Displaying the current user's name in the placeholder
+          placeholder={`Message ${selectedUser ? selectedUser.name : ''}`} // Displaying the current user's name in the placeholder
           size="md"
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={e => setNewMessage(e.target.value)}
         />
         <Button colorScheme="teal" size="md" onClick={handleSendMessage}>
           Send
